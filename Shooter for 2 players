@@ -1,0 +1,151 @@
+import tkinter
+from tkinter import messagebox
+
+count1 = 3
+count2 = 3
+x1, y1, x2, y2 = 50, 300, 100, 400
+xa1, ya1, xa2, ya2 = 800, 300, 850, 400
+points1 = 0
+points2 = 0
+
+def move_up_boy1():
+    global x1, x2, y1, y2, head1, boy1, gun1
+    if y1 == 50:
+        pass
+    else:
+        canvas.delete(boy1, head1, gun1)
+        y1 -= 50
+        y2 -= 50
+        boy1 = canvas.create_oval(x1, y1, x2, y2, fill='Red')
+        head1 = canvas.create_oval(x1, y1 - 50, x2, y1, fill='Red')
+        gun1 = canvas.create_rectangle(x1 + 20, y1 + 10, x2 + 40, y1 + 20, fill='Black')
+
+def move_down_boy1():
+    global x1, x2, y1, y2, head1, boy1, gun1
+    if  y2 == 600:
+        pass
+    else:
+        canvas.delete(boy1, head1, gun1)
+        y1 += 50
+        y2 += 50
+        boy1 = canvas.create_oval(x1, y1, x2, y2, fill='Red')
+        head1 = canvas.create_oval(x1, y1 - 50, x2, y1, fill='Red')
+        gun1 = canvas.create_rectangle(x1 + 20, y1 + 10, x2 + 40, y1 + 20, fill='Black')
+
+def move_up_boy2():
+    global xa1, xa2, ya1, ya2, head2, boy2, gun2
+    if ya1 == 50:
+        pass
+    else:
+        canvas.delete(boy2, head2, gun2)
+        ya1 -= 50
+        ya2 -= 50
+        head2 = canvas.create_oval(xa1, ya1 - 50, xa2, ya1, fill='Blue')
+        boy2 = canvas.create_oval(xa1, ya1, xa2, ya2, fill='Blue')
+        gun2 = canvas.create_rectangle(xa1 - 40, ya1 + 10, xa2 - 20, ya1 + 20, fill='Black')
+
+def move_down_boy2():
+    global xa1, xa2, ya1, ya2, head2, boy2, gun2
+    if ya2 == 600:
+        pass
+    else:
+        canvas.delete(boy2, head2, gun2)
+        ya1 += 50
+        ya2 += 50
+        head2 = canvas.create_oval(xa1, ya1 - 50, xa2, ya1, fill='Blue')
+        boy2 = canvas.create_oval(xa1, ya1, xa2, ya2, fill='Blue')
+        gun2 = canvas.create_rectangle(xa1 - 40, ya1 + 10, xa2 - 20, ya1 + 20, fill='Black')
+
+def fire_gun1():
+    global y1, y2, ya1, ya2, count1, patron1, points1, points2
+    if count1 == 0:
+        pass
+    else:
+        canvas.delete(patron1)
+        xf11 = 810
+        xf12 = 840
+        patron1 = canvas.create_oval(xf11, y1 + 10, xf12, y1 + 20, fill='Red')
+        count1 -= 1
+        label_patron1['text'] = f'Bullets: {count1}'
+        if y1 + 15 in range(ya1 - 50, ya2 + 1):
+            messagebox.showinfo('winner', 'Red player win')
+            points1 += 1
+            label_points['text'] = f'{points1}:{points2}'
+
+def fire_gun2():
+    global ya1, ya2, y1, y2, count2, patron2, points2, points1
+    if count2 == 0:
+        pass
+    else:
+        canvas.delete(patron2)
+        xf21 = 60
+        xf22 = 90
+        patron2 = canvas.create_oval(xf21, ya1 + 10, xf22, ya1 + 20, fill='Blue')
+        count2 -= 1
+        label_patron2['text'] = f'Bullets: {count2}'
+        if ya1 + 15 in range(y1 - 50, y2 + 1):
+            messagebox.showinfo('winner', 'Blue player win')
+            points2 += 1
+            label_points['text'] = f'{points1}:{points2}'
+
+def reload1():
+    global count1
+    count1 = 3
+    label_patron1['text'] = f'Bullets: {count1}'
+
+def reload2():
+    global count2
+    count2 = 3
+    label_patron2['text'] = f'Bullets: {count2}'
+
+def rules():
+    messagebox.showinfo('rules', 'Red_Boy:\nup - W\ndown - S\nshoot - D\nreload - E\n\nBlue_Boy:\nup - ↑ or 8\ndown - ↓ or 5\nshoot - ← or 4\nreload - → or 7')
+
+def key_pressed(event):
+    if event.keysym == 'w':
+        move_up_boy1()
+    elif event.keysym == 's':
+        move_down_boy1()
+    elif event.keysym == 'd':
+        fire_gun1()
+    elif event.keysym == 'e':
+        reload1()
+    elif event.char == '8' or event.keysym == 'Up':
+        move_up_boy2()
+    elif event.char == '5' or event.keysym == 'Down':
+        move_down_boy2()
+    elif event.char == '4' or event.keysym == 'Left':
+        fire_gun2()
+    elif event.char == '7' or event.keysym == 'Right':
+        reload2()
+
+window = tkinter.Tk()
+window.title('shooter for 2 players')
+window.geometry('1000x750')
+window.bind('<Key>', key_pressed)
+canvas = tkinter.Canvas(width=900, height=600, bg='White')
+canvas.pack()
+
+label_patron1 = tkinter.Label(text=f'Bullets: {count1}', font=20)
+label_patron2 = tkinter.Label(text=f'Bullets: {count2}', font=20)
+label_points = tkinter.Label(text=f'{points1}:{points2}', font=20)
+button_rule = tkinter.Button(text='Rules', width=10, height=2, bg='Grey', command=rules)
+label_patron1.place(x=50, y=610)
+label_patron2.place(x=800, y=610)
+label_points.place(x=475, y=610)
+button_rule.place(x=450, y=660)
+
+line1 = canvas.create_line(150, 0, 150, 600)
+line2 = canvas.create_line(750, 0, 750, 600)
+
+head1 = canvas.create_oval(x1,y1 - 50,x2, y1, fill='Red')
+boy1 = canvas.create_oval(x1, y1, x2, y2, fill='Red')
+gun1 = canvas.create_rectangle(x1 + 20, y1 + 10, x2 + 40, y1 + 20, fill='Black')
+patron1 = canvas.create_oval(0, 0, 1, 1, fill='White', outline='White')
+
+head2 = canvas.create_oval(xa1,ya1 - 50,xa2, ya1, fill='Blue')
+boy2 = canvas.create_oval(xa1, ya1, xa2, ya2, fill='Blue')
+gun2 = canvas.create_rectangle(xa1 - 40, ya1 + 10, xa2 - 20, ya1 + 20,fill='Black')
+patron2 = canvas.create_oval(0, 0, 1, 1, fill='White', outline='White')
+
+window.mainloop()
